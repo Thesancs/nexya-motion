@@ -1,0 +1,134 @@
+import React from "react";
+import { Img, staticFile } from "remotion";
+import { colors, font } from "../theme";
+
+// Logo oficial: trocar o arquivo em public/brand/ para atualizar.
+export const Logo: React.FC<{ size?: number; wordmark?: boolean }> = ({
+  size = 64,
+  wordmark = true,
+}) => (
+  <div style={{ display: "flex", alignItems: "center", gap: size * 0.28 }}>
+    <Img
+      src={staticFile("brand/nexya-mark-white.svg")}
+      style={{ width: size, height: size * (2224 / 2152) }}
+    />
+    {wordmark ? (
+      <span
+        style={{
+          fontFamily: font.family,
+          fontWeight: font.bold,
+          fontSize: size * 0.72,
+          color: colors.text,
+          letterSpacing: "-0.02em",
+        }}
+      >
+        Nexya
+      </span>
+    ) : null}
+  </div>
+);
+
+// Núcleo da plataforma: círculo centrado em (x, y) com o símbolo oficial.
+export const Hub: React.FC<{ x: number; y: number; size?: number }> = ({
+  x,
+  y,
+  size = 240,
+}) => (
+  <div
+    style={{
+      position: "absolute",
+      left: x - size / 2,
+      top: y - size / 2,
+      width: size,
+      height: size,
+      borderRadius: "50%",
+      background: `radial-gradient(circle at 35% 30%, rgba(20,216,205,0.35), ${colors.surface} 70%)`,
+      border: "2px solid rgba(20,216,205,0.6)",
+      boxShadow:
+        "0 0 0 18px rgba(20,216,205,0.06), 0 0 0 40px rgba(20,216,205,0.03), 0 0 90px rgba(20,216,205,0.35)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}
+  >
+    <Logo size={size * 0.42} wordmark={false} />
+  </div>
+);
+
+// Mesmos paths de public/brand/nexya-mark-white.svg, usados para o efeito de vidro.
+const MARK_PATHS = [
+  "M478.452 329.309C567.141 328.401 655.921 326.631 744.565 329.853C836.93 335.028 919.946 398.753 957.437 481.95C1110.8 824.86 1264.08 1167.86 1417.31 1510.82C1426.75 1531.29 1434.74 1552.66 1447.45 1571.36C1456.75 1585.3 1475.23 1581.21 1489.39 1582.76C1550.3 1583.89 1611.21 1582.8 1672.12 1583.16C1672.17 1687.15 1672.17 1791.09 1672.17 1895.03C1588.93 1897.39 1505.64 1896.25 1422.4 1895.94C1322.63 1895.44 1228.81 1828.94 1191.23 1737.3C1044.45 1409.19 897.751 1081.03 751.237 752.828C737.711 723.78 725.956 693.869 711.159 665.455C705.985 656.332 699.494 645.212 687.875 644.214C618.158 638.767 548.26 643.805 478.407 642.443C478.452 538.095 478.452 433.702 478.452 329.309Z",
+  "M1360.12 329.308C1464.11 327.538 1568.18 327.811 1672.17 329.354C1672.12 433.747 1672.17 538.095 1672.17 642.489C1612.89 641.218 1552.66 649.388 1494.2 636.043C1436.15 623.789 1385.18 578.854 1368.75 521.438C1350.14 458.938 1361.44 393.261 1360.12 329.308Z",
+  "M241.116 672.445C280.514 644.622 330.895 641.989 377.463 641.218C411.096 642.534 444.774 642.67 478.453 642.488C478.453 955.896 478.453 1269.3 478.453 1582.71C415.953 1580.99 352.409 1590.56 290.862 1575.54C222.326 1556.79 170.447 1491.48 165.363 1420.9C165 1216.7 165.635 1012.45 165 808.202C168.313 754.734 196.727 702.764 241.116 672.445Z",
+  "M1672.12 642.489C1726.27 643.033 1780.51 640.582 1834.57 644.304C1915.86 652.338 1983.62 726.911 1985.35 808.338C1984.8 910.054 1988.07 1011.77 1985.94 1113.48C1983.67 1203.81 1987.3 1294.18 1986.53 1384.54C1987.8 1423.49 1980.31 1463.34 1960.88 1497.38C1937.78 1538.14 1896.25 1567.23 1850.68 1577.26C1791.99 1590.47 1731.63 1580.85 1672.21 1582.03C1672.12 1268.85 1672.21 955.669 1672.12 642.489Z",
+];
+
+// ponytail: vidro em 2D (gradientes SVG + perspectiva CSS). Trocar por @remotion/three com
+// material transmissivo se a fidelidade do vidro precisar subir.
+export const GlassMark: React.FC<{
+  size: number;
+  style?: React.CSSProperties;
+  sheen?: number; // posição do reflexo; fora de 0..1 o reflexo some
+  rotateY?: number;
+}> = ({ size, style, sheen = 0.35, rotateY = -24 }) => {
+  const id = React.useId().replace(/:/g, "");
+  return (
+  <div
+    style={{
+      position: "absolute",
+      width: size,
+      height: size,
+      perspective: 1600,
+      ...style,
+    }}
+  >
+    <svg
+      viewBox="0 0 2152 2224"
+      width={size}
+      height={size}
+      style={{
+        overflow: "visible",
+        rotate: `y ${rotateY}deg`,
+        filter: `drop-shadow(0 0 60px rgba(20,216,205,0.35))`,
+      }}
+    >
+      <defs>
+        <linearGradient id={`${id}-body`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#7FF5EE" stopOpacity="0.55" />
+          <stop offset="0.45" stopColor="#14D8CD" stopOpacity="0.16" />
+          <stop offset="1" stopColor="#0A2A25" stopOpacity="0.5" />
+        </linearGradient>
+        <linearGradient id={`${id}-edge`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#E9FFFD" stopOpacity="0.95" />
+          <stop offset="0.5" stopColor="#14D8CD" stopOpacity="0.5" />
+          <stop offset="1" stopColor="#14D8CD" stopOpacity="0.15" />
+        </linearGradient>
+        <linearGradient id={`${id}-sheen`} x1="0" y1="0" x2="1" y2="0.4">
+          <stop
+            offset={Math.max(0, sheen - 0.12)}
+            stopColor="#fff"
+            stopOpacity="0"
+          />
+          <stop offset={sheen} stopColor="#fff" stopOpacity="0.55" />
+          <stop
+            offset={Math.min(1, sheen + 0.12)}
+            stopColor="#fff"
+            stopOpacity="0"
+          />
+        </linearGradient>
+      </defs>
+      {MARK_PATHS.map((d) => (
+        <g key={d}>
+          <path
+            d={d}
+            fill={`url(#${id}-body)`}
+            stroke={`url(#${id}-edge)`}
+            strokeWidth={14}
+          />
+          <path d={d} fill={`url(#${id}-sheen)`} />
+        </g>
+      ))}
+    </svg>
+  </div>
+);
+};
